@@ -30,6 +30,18 @@ class User extends Authenticatable
     ];
 
     /**
+     * 生成激活令牌
+     * boot 方法会在用户模型类完成初始化之后进行加载
+     */
+    public static function boot()
+    {
+        parent::boot();
+        static::creating(function ($user){
+            $user->activation_token = str_random(30);
+        });
+    }
+
+    /**
      * 生成用户的头像
      * @param string $size
      * @return string
