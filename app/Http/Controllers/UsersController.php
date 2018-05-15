@@ -48,7 +48,10 @@ class UsersController extends Controller
      */
     public function show(User $user)
     {
-        return view('users.show', compact('user'));
+        $statuses  = $user->statuses()
+                          ->orderBy('created_at','desc')
+                          ->paginate(30);
+        return view('users.show', compact('user','statuses'));
     }
 
     /**
@@ -83,13 +86,11 @@ class UsersController extends Controller
     {
         $view = 'emails.confirm';
         $data = compact('user');
-        $from = 'jinpeng0314@126.com';
-        $name = 'jinpeng';
         $to = $user->email;
-        $subject = '感谢注册 Sample Blog！请确认你的邮箱。';
+        $subject = "感谢注册 Sample Blog！请确认你的邮箱。";
 
-        Mail::send($view,$data,function ($message) use ($from,$name,$to,$subject){
-            $message->from($from,$name)->to($to)->subject($subject);
+        Mail::send($view, $data, function ($message) use ($to, $subject) {
+            $message->to($to)->subject($subject);
         });
     }
 
